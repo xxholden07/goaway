@@ -519,7 +519,10 @@ REMINDER_MESSAGES = [
     "Você poderia estar cozinhando algo delicioso.",
     "Você poderia estar tocando seu instrumento.",
     "Você poderia estar aprendendo algo novo.",
-    "Você poderia estar dormindo confortavelmente."
+    "Você poderia estar dormindo confortavelmente.",
+    "Oi, tá na hora de ir pra casa.",
+    "Chegou a hora de acabar esse encontro.",
+    "Você tá perdendo dinheiro, hein? Podia estar em casa assistindo TV."
 ]
 
 URGENT_MESSAGES = [
@@ -527,7 +530,10 @@ URGENT_MESSAGES = [
     "ATENÇÃO! Seu tempo acabou!",
     "VAI LOGO! JÁ PASSOU DA HORA!",
     "CORRE! TEM QUE IR EMBORA JÁ!",
-    "SÉRIO! TCHAU TCHAU! HORA DE IR!"
+    "SÉRIO! TCHAU TCHAU! HORA DE IR!",
+    "Chegou a hora de acabar esse encontro!",
+    "Oi, tá na hora de ir pra casa!",
+    "Você tá perdendo dinheiro, hein? Meu amigo, você podia estar em casa assistindo a GNT. Em vez de estar aqui, tá na hora de se despedir!"
 ]
 
 # Inicializar session state
