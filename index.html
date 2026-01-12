@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#667eea">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon.png">
+    <title>GoAway - Hora de Ir Embora!</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>GoAway</h1>
+            <p class="subtitle">Seu assistente para não ficar tempo demais</p>
+        </header>
+
+        <main>
+            <div class="card setup-card" id="setupCard">
+                <h2>Configurar Timer</h2>
+                
+                <div class="input-group">
+                    <label for="visitTime">Tempo de visita (minutos):</label>
+                    <input type="number" id="visitTime" min="1" max="480" value="60">
+                </div>
+
+                <div class="input-group">
+                    <label for="reminderInterval">Intervalo entre lembretes (minutos):</label>
+                    <input type="number" id="reminderInterval" min="1" max="60" value="5">
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="useVoice" checked>
+                    <label for="useVoice">Usar síntese de voz</label>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="useNotification" checked>
+                    <label for="useNotification">Usar notificações</label>
+                </div>
+
+                <button class="btn btn-primary" id="startBtn">Começar Visita</button>
+            </div>
+
+            <div class="card timer-card hidden" id="timerCard">
+                <h2>Visita em Andamento</h2>
+                
+                <div class="timer-display">
+                    <div class="time-remaining">
+                        <span id="timeDisplay">00:00</span>
+                    </div>
+                    <p class="time-label">Tempo restante</p>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+
+                <div class="status-message" id="statusMessage">
+                    Timer ativo
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-secondary" id="pauseBtn">Pausar</button>
+                    <button class="btn btn-danger" id="stopBtn">Parar</button>
+                </div>
+
+                <div class="reminder-log" id="reminderLog">
+                    <h3>Histórico de Lembretes</h3>
+                    <ul id="logList"></ul>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Feito para você não passar vergonha</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
