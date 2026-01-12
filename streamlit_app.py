@@ -5,114 +5,495 @@ import random
 
 # Configuração da página
 st.set_page_config(
-    page_title="GoAway - Hora de Ir Embora!",
-    page_icon="🏃",
+    page_title="GoAway - 8-Bit Edition",
+    page_icon="🎮",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
 
-# CSS customizado
+# CSS customizado 8-bits retro com screensaver
 st.markdown("""
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    
+    * {
+        image-rendering: pixelated;
+        image-rendering: -moz-crisp-edges;
+        image-rendering: crisp-edges;
+    }
+    
     .stApp {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #2b2b2b;
+        font-family: 'Press Start 2P', monospace;
+    }
+    
+    .stApp::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: repeating-linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.15),
+            rgba(0, 0, 0, 0.15) 1px,
+            transparent 1px,
+            transparent 2px
+        );
+        pointer-events: none;
+        z-index: 9999;
     }
     
     .main-title {
         text-align: center;
-        color: white;
-        font-size: 3em;
-        font-weight: bold;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        margin-bottom: 0;
+        color: #00ff00;
+        font-size: 1.8em;
+        font-weight: normal;
+        font-family: 'Press Start 2P', monospace;
+        text-shadow: 2px 2px 0 #006600, 4px 4px 0 #003300;
+        margin-bottom: 10px;
+        padding: 20px;
+        background: #000;
+        border: 4px solid #00ff00;
+        box-shadow: 0 0 10px #00ff00, inset 0 0 10px rgba(0, 255, 0, 0.3);
+        animation: blink 1s steps(2) infinite;
     }
     
     .subtitle {
         text-align: center;
-        color: white;
-        font-size: 1.2em;
-        opacity: 0.9;
+        color: #ffff00;
+        font-size: 0.6em;
+        font-family: 'Press Start 2P', monospace;
+        text-shadow: 1px 1px 0 #666600;
         margin-bottom: 2em;
     }
     
     .timer-display {
         text-align: center;
-        font-size: 5em;
-        font-weight: bold;
-        color: white;
-        font-family: 'Courier New', monospace;
-        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+        font-size: 3.5em;
+        font-weight: normal;
+        color: #00ff00;
+        font-family: 'Press Start 2P', monospace;
+        text-shadow: 2px 2px 0 #006600, 0 0 10px #00ff00;
         margin: 20px 0;
+        padding: 30px;
+        background: #000;
+        border: 4px solid #00ff00;
+        box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.3);
+        animation: blink 1s steps(1) infinite;
     }
     
     .status-normal {
-        padding: 20px;
-        background: #e8f5e9;
-        border-radius: 10px;
-        color: #2e7d32;
-        font-weight: 600;
+        padding: 15px;
+        background: #000;
+        border: 3px solid #00ff00;
+        color: #00ff00;
+        font-weight: normal;
+        font-family: 'Press Start 2P', monospace;
+        font-size: 0.6em;
         text-align: center;
         margin: 20px 0;
+        text-shadow: 1px 1px 0 #006600;
+        box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.3);
     }
     
     .status-warning {
-        padding: 20px;
-        background: #fff3e0;
-        border-radius: 10px;
-        color: #e65100;
-        font-weight: 600;
+        padding: 15px;
+        background: #000;
+        border: 3px solid #ff8800;
+        color: #ff8800;
+        font-weight: normal;
+        font-family: 'Press Start 2P', monospace;
+        font-size: 0.6em;
         text-align: center;
         margin: 20px 0;
-        animation: pulse 2s infinite;
+        text-shadow: 1px 1px 0 #663300;
+        box-shadow: inset 0 0 10px rgba(255, 136, 0, 0.3);
+        animation: blink 0.5s steps(2) infinite;
     }
     
     .status-danger {
-        padding: 20px;
-        background: #ffebee;
-        border-radius: 10px;
-        color: #c62828;
-        font-weight: 600;
+        padding: 15px;
+        background: #000;
+        border: 3px solid #ff0000;
+        color: #ff0000;
+        font-weight: normal;
+        font-family: 'Press Start 2P', monospace;
+        font-size: 0.6em;
         text-align: center;
         margin: 20px 0;
-        animation: shake 0.5s infinite;
+        text-shadow: 1px 1px 0 #660000;
+        box-shadow: inset 0 0 10px rgba(255, 0, 0, 0.3);
+        animation: blink 0.3s steps(2) infinite;
     }
     
     .reminder-message {
-        padding: 15px;
-        background: white;
-        border-radius: 10px;
-        border-left: 5px solid #667eea;
+        padding: 12px;
+        background: #000;
+        border: 2px solid #00ff00;
         margin: 10px 0;
-        font-size: 1.1em;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        font-size: 0.5em;
+        font-family: 'Press Start 2P', monospace;
+        color: #00ffff;
+        text-shadow: 1px 1px 0 #006666;
+        box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.2);
     }
     
     .urgent-message {
         padding: 20px;
-        background: #ff5252;
-        color: white;
-        border-radius: 10px;
+        background: #000;
+        border: 4px solid #ff0000;
+        color: #ff0000;
         margin: 10px 0;
-        font-size: 1.3em;
-        font-weight: bold;
+        font-size: 1em;
+        font-weight: normal;
+        font-family: 'Press Start 2P', monospace;
         text-align: center;
-        animation: shake 0.5s infinite;
+        text-shadow: 2px 2px 0 #660000;
+        box-shadow: 0 0 20px #ff0000, inset 0 0 20px rgba(255, 0, 0, 0.3);
+        animation: blink 0.2s steps(2) infinite;
     }
     
-    @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.7; }
+    @keyframes blink {
+        0%, 49% { opacity: 1; }
+        50%, 100% { opacity: 0.3; }
     }
     
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        75% { transform: translateX(5px); }
-    }
-    
+    /* Estilizar elementos Streamlit */
     div[data-testid="stMetricValue"] {
-        font-size: 3em;
-        color: white;
+        font-size: 2em;
+        color: #00ff00;
+        font-family: 'Press Start 2P', monospace;
+    }
+    
+    .stButton button {
+        background: #000;
+        color: #00ff00;
+        border: 4px solid #00ff00;
+        font-family: 'Press Start 2P', monospace;
+        font-size: 0.7em;
+        padding: 15px;
+        text-shadow: 1px 1px 0 #006600;
+        box-shadow: 4px 4px 0 #003300;
+        transition: none;
+    }
+    
+    .stButton button:hover {
+        background: #003300;
+        box-shadow: 2px 2px 0 #003300;
+    }
+    
+    .stNumberInput input {
+        background: #000;
+        color: #00ff00;
+        border: 3px solid #00ff00;
+        font-family: 'Press Start 2P', monospace;
+        box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.3);
+    }
+    
+    label {
+        color: #00ffff;
+        font-family: 'Press Start 2P', monospace;
+        font-size: 0.6em;
+        text-shadow: 1px 1px 0 #006666;
+    }
+    
+    h2, h3 {
+        color: #ffff00;
+        font-family: 'Press Start 2P', monospace;
+        text-shadow: 2px 2px 0 #666600;
+    }
+    
+    .stProgress > div > div {
+        background: #000;
+        border: 3px solid #00ff00;
+    }
+    
+    .stProgress > div > div > div {
+        background: repeating-linear-gradient(
+            90deg,
+            #00ff00,
+            #00ff00 4px,
+            #00cc00 4px,
+            #00cc00 8px
+        );
+        box-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
+    }
+    
+    hr {
+        border-color: #00ff00;
+        border-width: 2px;
+        border-style: solid;
+    }
+    
+    /* Screensaver 8-bit */
+    .screensaver-container {
+        position: relative;
+        width: 100%;
+        height: 200px;
+        margin-bottom: 20px;
+    }
+    
+    .screensaver-pixel {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: 
+            repeating-linear-gradient(
+                0deg,
+                #5599ff 0px,
+                #5599ff 2px,
+                #77aaff 2px,
+                #77aaff 4px
+            );
+        border: 4px solid #00ff00;
+        overflow: hidden;
+        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 10px rgba(0, 255, 0, 0.5);
+    }
+    
+    .sun-pixel {
+        position: absolute;
+        top: 15px;
+        right: 25px;
+        width: 24px;
+        height: 24px;
+        background: #ffff00;
+        box-shadow: 0 0 8px rgba(255, 255, 0, 0.8);
+        animation: sunPulse 2s steps(2) infinite;
+    }
+    
+    @keyframes sunPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.8; }
+    }
+    
+    .cloud-pixel {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background: #ffffff;
+        opacity: 0.9;
+        box-shadow: 
+            6px 0 0 #ffffff,
+            12px 0 0 #ffffff,
+            0 6px 0 #ffffff,
+            6px 6px 0 #ffffff,
+            12px 6px 0 #ffffff;
+    }
+    
+    .cloud1 {
+        top: 20px;
+        left: 15%;
+        animation: floatCloud 20s steps(100) infinite;
+    }
+    
+    .cloud2 {
+        top: 35px;
+        left: 55%;
+        animation: floatCloud 25s steps(100) infinite;
+    }
+    
+    @keyframes floatCloud {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(60px); }
+    }
+    
+    .water-pixel {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 40%;
+        background: 
+            repeating-linear-gradient(
+                0deg,
+                #0066cc 0px,
+                #0066cc 3px,
+                #0088ff 3px,
+                #0088ff 6px
+            );
+        animation: waterWave 1s steps(2) infinite;
+    }
+    
+    @keyframes waterWave {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-2px); }
+    }
+    
+    .sand-pixel {
+        position: absolute;
+        bottom: 0;
+        width: 60%;
+        height: 30%;
+        left: 20%;
+        background: 
+            repeating-linear-gradient(
+                0deg,
+                #ffcc66 0px,
+                #ffcc66 3px,
+                #ffaa44 3px,
+                #ffaa44 6px
+            );
+        clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+    }
+    
+    .palm-pixel {
+        position: absolute;
+        bottom: 45px;
+        left: 35%;
+        z-index: 10;
+    }
+    
+    .trunk-pixel {
+        width: 10px;
+        height: 45px;
+        background: 
+            repeating-linear-gradient(
+                0deg,
+                #663300 0px,
+                #663300 3px,
+                #884422 3px,
+                #884422 6px
+            );
+        margin: 0 auto;
+        box-shadow: 0 0 0 1px #000;
+    }
+    
+    .leaves-pixel {
+        position: relative;
+        width: 32px;
+        height: 16px;
+        margin-left: -11px;
+        margin-top: -8px;
+        background: #00aa00;
+        box-shadow: 
+            -6px -3px 0 0 #00aa00,
+            6px -3px 0 0 #00aa00,
+            -12px -6px 0 0 #008800,
+            12px -6px 0 0 #008800;
+    }
+    
+    .castaway-pixel {
+        position: absolute;
+        bottom: 50px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 11;
+        animation: castawayIdle 1s steps(2) infinite;
+    }
+    
+    @keyframes castawayIdle {
+        0%, 100% { transform: translateX(-50%) translateY(0); }
+        50% { transform: translateX(-50%) translateY(-3px); }
+    }
+    
+    .head-pixel {
+        width: 12px;
+        height: 12px;
+        background: #ffcc99;
+        margin: 0 auto;
+        position: relative;
+        box-shadow: 0 0 0 2px #000;
+    }
+    
+    .head-pixel::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 6px;
+        background: #663300;
+        box-shadow: 0 0 0 1px #000;
+    }
+    
+    .body-pixel {
+        width: 12px;
+        height: 16px;
+        background: #0066ff;
+        margin: 2px auto;
+        box-shadow: 0 0 0 2px #000;
+        position: relative;
+    }
+    
+    .body-pixel::before,
+    .body-pixel::after {
+        content: '';
+        position: absolute;
+        width: 10px;
+        height: 3px;
+        background: #ffcc99;
+        top: 0;
+        box-shadow: 0 0 0 1px #000;
+    }
+    
+    .body-pixel::before {
+        left: -8px;
+        transform: rotate(20deg);
+    }
+    
+    .body-pixel::after {
+        right: -8px;
+        transform: rotate(-20deg);
+    }
+    
+    .bird-pixel {
+        position: absolute;
+        top: 30px;
+        left: -30px;
+        width: 12px;
+        height: 6px;
+        background: #000;
+        animation: flyAcross 10s steps(50) infinite;
+    }
+    
+    .bird-pixel::before,
+    .bird-pixel::after {
+        content: '';
+        position: absolute;
+        width: 10px;
+        height: 3px;
+        background: #000;
+        top: 2px;
+        animation: flap 0.2s steps(1) infinite;
+    }
+    
+    .bird-pixel::before {
+        left: -8px;
+        transform: rotate(-30deg);
+    }
+    
+    .bird-pixel::after {
+        right: -8px;
+        transform: rotate(30deg);
+    }
+    
+    @keyframes flyAcross {
+        0% { left: -30px; opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { left: calc(100% + 30px); opacity: 0; }
+    }
+    
+    @keyframes flap {
+        0% { transform: rotate(-30deg) translateY(0); }
+        50% { transform: rotate(-50deg) translateY(-2px); }
+    }
+    
+    .activity-pixel {
+        position: absolute;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #000;
+        padding: 5px 8px;
+        border: 2px solid #00ff00;
+        font-size: 0.4em;
+        color: #00ff00;
+        font-family: 'Press Start 2P', monospace;
+        box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+        text-align: center;
+        text-shadow: 1px 1px 0 #006600;
+        animation: blink 2s steps(2) infinite;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -236,7 +617,7 @@ st.markdown('<p class="subtitle">Seu assistente para não ficar tempo demais</p>
 if not st.session_state.timer_active:
     # Tela de configuração
     st.markdown("---")
-    st.subheader("⚙️ Configurar Timer")
+    st.subheader("CONFIGURAR TIMER")
     
     col1, col2 = st.columns(2)
     
@@ -260,7 +641,7 @@ if not st.session_state.timer_active:
     
     st.markdown("---")
     
-    if st.button("🚀 Começar Visita", use_container_width=True, type="primary"):
+    if st.button(">>> COMECAR VISITA <<<", use_container_width=True, type="primary"):
         start_timer(visit_time, reminder_interval)
         st.rerun()
 
@@ -269,6 +650,31 @@ else:
     remaining = get_remaining_seconds()
     elapsed = get_elapsed_seconds()
     percent_remaining = (remaining / st.session_state.total_seconds) * 100
+    
+    # Screensaver 8-bit animado
+    screensaver_html = """
+    <div class="screensaver-container">
+        <div class="screensaver-pixel">
+            <div class="sun-pixel"></div>
+            <div class="cloud-pixel cloud1"></div>
+            <div class="cloud-pixel cloud2"></div>
+            <div class="water-pixel"></div>
+            <div class="sand-pixel"></div>
+            <div class="palm-pixel">
+                <div class="trunk-pixel"></div>
+                <div class="leaves-pixel"></div>
+            </div>
+            <div class="castaway-pixel">
+                <div class="head-pixel"></div>
+                <div class="body-pixel"></div>
+            </div>
+            <div class="bird-pixel"></div>
+        </div>
+        <div class="activity-pixel">NA ILHA ESPERANDO...</div>
+    </div>
+    """
+    
+    st.markdown(screensaver_html, unsafe_allow_html=True)
     
     # Verificar se acabou o tempo
     if remaining <= 0 and not st.session_state.paused:
@@ -290,7 +696,7 @@ else:
     
     # Display do timer
     st.markdown(f'<div class="timer-display">{format_time(remaining)}</div>', unsafe_allow_html=True)
-    st.markdown('<p style="text-align: center; color: white; font-size: 1.1em;">Tempo restante</p>', unsafe_allow_html=True)
+    st.markdown('<p style="text-align: center; color: #ffff00; font-size: 0.7em; font-family: \'Press Start 2P\', monospace; text-shadow: 1px 1px 0 #666600;">TEMPO RESTANTE</p>', unsafe_allow_html=True)
     
     # Barra de progresso
     progress = min(1.0, elapsed / st.session_state.total_seconds)
@@ -308,20 +714,20 @@ else:
     col1, col2 = st.columns(2)
     
     with col1:
-        pause_label = "▶️ Retomar" if st.session_state.paused else "⏸️ Pausar"
+        pause_label = ">>> RETOMAR <<<" if st.session_state.paused else "|| PAUSAR ||"
         if st.button(pause_label, use_container_width=True):
             pause_timer()
             st.rerun()
     
     with col2:
-        if st.button("🛑 Parar", use_container_width=True):
+        if st.button("[X] PARAR", use_container_width=True):
             stop_timer()
             st.rerun()
     
     # Histórico de lembretes
     if st.session_state.reminders:
         st.markdown("---")
-        st.subheader("📝 Histórico de Lembretes")
+        st.subheader("HISTORICO DE LEMBRETES")
         
         for reminder in st.session_state.reminders:
             st.markdown(
@@ -337,6 +743,6 @@ else:
 # Footer
 st.markdown("---")
 st.markdown(
-    '<p style="text-align: center; color: white; opacity: 0.8;">Feito para você não passar vergonha</p>',
+    '<p style="text-align: center; color: #00ff00; font-size: 0.5em; font-family: \'Press Start 2P\', monospace; text-shadow: 1px 1px 0 #006600; animation: blink 2s steps(2) infinite;">FEITO PARA VOCE NAO PASSAR VERGONHA</p>',
     unsafe_allow_html=True
 )
