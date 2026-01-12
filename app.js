@@ -8,6 +8,11 @@ let nextReminderAt = 0;
 let useVoice = true;
 let useNotification = true;
 
+// Estado do screensaver
+let screensaverTimer = null;
+let currentActivity = 'idle';
+let activityDuration = 0;
+
 // Mensagens para lembretes
 const reminderMessages = [
     "Psiu! Já pensou em ir embora?",
@@ -50,6 +55,10 @@ const timeDisplay = document.getElementById('timeDisplay');
 const progressFill = document.getElementById('progressFill');
 const statusMessage = document.getElementById('statusMessage');
 const logList = document.getElementById('logList');
+const castaway = document.getElementById('castaway');
+const activityText = document.getElementById('activityText');
+const messageBottle = document.getElementById('messageBottle');
+const bird = document.getElementById('bird');
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
@@ -111,6 +120,9 @@ function startVisit() {
     // Iniciar timer
     updateDisplay();
     timer = setInterval(tick, 1000);
+    
+    // Iniciar screensaver
+    startScreensaver();
 
     addLog('Visita iniciada!');
 }
@@ -243,7 +255,10 @@ function togglePause() {
 
 function stopVisit() {
     clearInterval(timer);
-    timer = null;
+    timParar screensaver
+    stopScreensaver();
+    
+    // er = null;
     isPaused = false;
     
     // Voltar para tela de configuração
@@ -265,7 +280,104 @@ function addLog(message) {
     logList.insertBefore(li, logList.firstChild);
     
     // Manter apenas os últimos 10 logs
-    while (logList.children.length > 10) {
+ 
+
+// ===== SCREENSAVER FUNCTIONS =====
+
+const activities = [
+    { name: 'idle', text: 'Esperando na ilha...', duration: 5000, animation: 'idle' },
+    { name: 'walking', text: 'Caminhando pela praia...', duration: 4000, animation: 'walking' },
+    { name: 'waving', text: 'Acenando para um navio distante...', duration: 3000, animation: 'waving' },
+    { name: 'sitting', text: 'Sentado pensando na vida...', duration: 5000, animation: 'sitting' },
+    { name: 'bottle', text: 'Encontrou uma garrafa com mensagem!', duration: 4000, animation: 'idle' },
+    { name: 'bird', text: 'Um pássaro passou voando...', duration: 3000, animation: 'idle' },
+    { name: 'looking', text: 'Olhando o horizonte...', duration: 4000, animation: 'waving' },
+    { name: 'resting', text: 'Descansando embaixo da palmeira...', duration: 5000, animation: 'sitting' }
+];
+
+function startScreensaver() {
+    currentActivity = 'idle';
+    activityDuration = 0;
+    screensaverTimer = setInterval(updateScreensaver, 100);
+    changeActivity();
+}
+
+function stopScreensaver() {
+    if (screensaverTimer) {
+        clearInterval(screensaverTimer);
+        screensaverTimer = null;
+    }
+    resetCastaway();
+}
+
+function updateScreensaver() {
+    if (isPaused) return;
+    
+    activityDuration += 100;
+    
+    // Mudar atividade quando o tempo acabar
+    if (activityDuration >= getCurrentActivity().duration) {
+        changeActivity();
+    }
+}
+
+function getCurrentActivity() {
+    return activities.find(a => a.name === currentActivity) || activities[0];
+}
+
+function changeActivity() {
+    // Escolher nova atividade aleatória
+    const newActivity = activities[Math.floor(Math.random() * activities.length)];
+    currentActivity = newActivity.name;
+    activityDuration = 0;
+    
+    // Atualizar texto
+    activityText.textContent = newActivity.text;
+    
+    // Resetar animações
+    resetCastaway();
+    
+    // Aplicar nova animação
+    setTimeout(() => {
+        switch(newActivity.animation) {
+            case 'walking':
+                castaway.classList.add('walking');
+                break;
+            case 'waving':
+                castaway.classList.add('waving');
+                break;
+            case 'sitting':
+                castaway.classList.add('sitting');
+                break;
+            case 'idle':
+            default:
+                // Usa a animação padrão
+                break;
+        }
+        
+        // Ações especiais
+        if (currentActivity === 'bottle') {
+            messageBottle.classList.remove('hidden');
+            setTimeout(() => {
+                messageBottle.classList.add('hidden');
+            }, newActivity.duration - 500);
+        }
+        
+        if (currentActivity === 'bird') {
+            bird.classList.add('flying');
+            setTimeout(() => {
+                bird.classList.remove('flying');
+            }, newActivity.duration);
+        }
+    }, 100);
+}
+
+function resetCastaway() {
+    castaway.classList.remove('walking', 'waving', 'sitting');
+    castaway.style.left = '50%';
+    messageBottle.classList.add('hidden');
+    bird.classList.remove('flying');
+}   while (logList.children.length > 10) {
         logList.removeChild(logList.lastChild);
     }
 }
