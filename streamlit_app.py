@@ -530,69 +530,11 @@ st.markdown("""
         50% { box-shadow: 0 0 25px rgba(0, 255, 0, 1), 4px 4px 0 #003300; }
     }
     
-    .chat-popup {
-        position: fixed;
-        bottom: 90px;
-        right: 20px;
-        width: 400px;
-        height: 600px;
-        background: #000;
-        border: 4px solid #00ff00;
-        box-shadow: 0 0 20px rgba(0, 255, 0, 0.8), inset 0 0 10px rgba(0, 255, 0, 0.3);
-        display: none;
-        flex-direction: column;
-        z-index: 10001;
-        image-rendering: pixelated;
-    }
-    
-    .chat-popup.active {
-        display: flex;
-    }
-    
-    .chat-header {
-        background: #00ff00;
-        color: #000;
-        padding: 15px;
-        font-family: 'Press Start 2P', monospace;
-        font-size: 0.7em;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 4px solid #00ff00;
-    }
-    
-    .chat-close {
-        cursor: pointer;
-        font-size: 1.2em;
-        font-weight: bold;
-        padding: 5px 10px;
-        background: #000;
-        color: #00ff00;
-        border: 2px solid #000;
-    }
-    
-    .chat-close:hover {
-        background: #ff0000;
-        color: #fff;
-        border-color: #ff0000;
-    }
-    
-    .chat-body {
-        flex: 1;
-        overflow: hidden;
-    }
-    
-    .chat-body iframe {
-        width: 100%;
-        height: 100%;
-        border: none;
-    }
-    
     @media (max-width: 768px) {
-        .chat-popup {
-            width: calc(100vw - 40px);
-            height: calc(100vh - 140px);
-            right: 20px;
+        .chat-button {
+            width: 50px;
+            height: 50px;
+            font-size: 1.2em;
         }
     }
 </style>
@@ -601,28 +543,30 @@ st.markdown("""
 # Widget de Chat Flutuante
 st.markdown("""
 <div class="chat-widget">
-    <div class="chat-button" onclick="toggleChat()">
+    <div class="chat-button" id="chatButton">
         🤖
-    </div>
-    <div class="chat-popup" id="chatPopup">
-        <div class="chat-header">
-            <span>CHEGO TARDE</span>
-            <span class="chat-close" onclick="toggleChat()">X</span>
-        </div>
-        <div class="chat-body">
-            <iframe src="https://chatgpt.com/g/g-69668205e3ac8191b3b04c831302c5d6-chego-tarde" 
-                    allow="microphone; camera" 
-                    loading="lazy">
-            </iframe>
-        </div>
     </div>
 </div>
 
 <script>
-    function toggleChat() {
-        const popup = document.getElementById('chatPopup');
-        popup.classList.toggle('active');
-    }
+    (function() {
+        const chatButton = document.getElementById('chatButton');
+        if (chatButton) {
+            chatButton.addEventListener('click', function() {
+                // Abrir em popup centralizado
+                const width = 500;
+                const height = 700;
+                const left = (screen.width - width) / 2;
+                const top = (screen.height - height) / 2;
+                
+                window.open(
+                    'https://chatgpt.com/g/g-69668205e3ac8191b3b04c831302c5d6-chego-tarde',
+                    'ChegaTarde',
+                    'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top + ',toolbar=no,menubar=no,scrollbars=yes,resizable=yes'
+                );
+            });
+        }
+    })();
 </script>
 """, unsafe_allow_html=True)
 
