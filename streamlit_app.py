@@ -495,7 +495,135 @@ st.markdown("""
         text-shadow: 1px 1px 0 #006600;
         animation: blink 2s steps(2) infinite;
     }
+    
+    /* Chat Widget 8-bit */
+    .chat-widget {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 10000;
+    }
+    
+    .chat-button {
+        width: 60px;
+        height: 60px;
+        background: #000;
+        border: 4px solid #00ff00;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5em;
+        box-shadow: 0 0 15px rgba(0, 255, 0, 0.8), 4px 4px 0 #003300;
+        animation: chatPulse 2s ease-in-out infinite;
+        transition: transform 0.1s;
+    }
+    
+    .chat-button:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 20px rgba(0, 255, 0, 1), 4px 4px 0 #003300;
+    }
+    
+    @keyframes chatPulse {
+        0%, 100% { box-shadow: 0 0 15px rgba(0, 255, 0, 0.8), 4px 4px 0 #003300; }
+        50% { box-shadow: 0 0 25px rgba(0, 255, 0, 1), 4px 4px 0 #003300; }
+    }
+    
+    .chat-popup {
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        width: 400px;
+        height: 600px;
+        background: #000;
+        border: 4px solid #00ff00;
+        box-shadow: 0 0 20px rgba(0, 255, 0, 0.8), inset 0 0 10px rgba(0, 255, 0, 0.3);
+        display: none;
+        flex-direction: column;
+        z-index: 10001;
+        image-rendering: pixelated;
+    }
+    
+    .chat-popup.active {
+        display: flex;
+    }
+    
+    .chat-header {
+        background: #00ff00;
+        color: #000;
+        padding: 15px;
+        font-family: 'Press Start 2P', monospace;
+        font-size: 0.7em;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 4px solid #00ff00;
+    }
+    
+    .chat-close {
+        cursor: pointer;
+        font-size: 1.2em;
+        font-weight: bold;
+        padding: 5px 10px;
+        background: #000;
+        color: #00ff00;
+        border: 2px solid #000;
+    }
+    
+    .chat-close:hover {
+        background: #ff0000;
+        color: #fff;
+        border-color: #ff0000;
+    }
+    
+    .chat-body {
+        flex: 1;
+        overflow: hidden;
+    }
+    
+    .chat-body iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+    
+    @media (max-width: 768px) {
+        .chat-popup {
+            width: calc(100vw - 40px);
+            height: calc(100vh - 140px);
+            right: 20px;
+        }
+    }
 </style>
+""", unsafe_allow_html=True)
+
+# Widget de Chat Flutuante
+st.markdown("""
+<div class="chat-widget">
+    <div class="chat-button" onclick="toggleChat()">
+        🤖
+    </div>
+    <div class="chat-popup" id="chatPopup">
+        <div class="chat-header">
+            <span>CHEGO TARDE</span>
+            <span class="chat-close" onclick="toggleChat()">X</span>
+        </div>
+        <div class="chat-body">
+            <iframe src="https://chatgpt.com/g/g-69668205e3ac8191b3b04c831302c5d6-chego-tarde" 
+                    allow="microphone; camera" 
+                    loading="lazy">
+            </iframe>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleChat() {
+        const popup = document.getElementById('chatPopup');
+        popup.classList.toggle('active');
+    }
+</script>
 """, unsafe_allow_html=True)
 
 # Mensagens para lembretes
@@ -578,12 +706,40 @@ def format_time(seconds):
     secs = int(seconds % 60)
     return f"{minutes:02d}:{secs:02d}"
 
+def speak_message(message):
+    """Reproduz o áudio da mensagem usando Web Speech API"""
+    # Escapar aspas na mensagem para JavaScript
+    safe_message = message.replace("'", "\\'").replace('"', '\\"')
+    
+    audio_html = f"""
+    <script>
+        if ('speechSynthesis' in window) {{
+            const utterance = new SpeechSynthesisUtterance("{safe_message}");
+            utterance.lang = 'pt-BR';
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+            utterance.volume = 1.0;
+            
+            // Garantir que a síntese está pronta
+            if (window.speechSynthesis.speaking) {{
+                window.speechSynthesis.cancel();
+            }}
+            
+            window.speechSynthesis.speak(utterance);
+        }}
+    </script>
+    """
+    st.components.v1.html(audio_html, height=0)
+
 def add_reminder(message):
-    """Adiciona um lembrete ao histórico"""
+    """Adiciona um lembrete ao histórico e reproduz áudio"""
     timestamp = datetime.now().strftime("%H:%M:%S")
     st.session_state.reminders.insert(0, {"time": timestamp, "message": message})
     if len(st.session_state.reminders) > 10:
         st.session_state.reminders = st.session_state.reminders[:10]
+    
+    # Reproduzir áudio da mensagem
+    speak_message(message)
 
 def start_timer(visit_time, reminder_interval):
     """Inicia o timer"""
@@ -687,6 +843,7 @@ else:
         message = random.choice(URGENT_MESSAGES)
         st.markdown(f'<div class="urgent-message">{message}</div>', unsafe_allow_html=True)
         add_reminder(message)
+        speak_message(message)  # Áudio extra para mensagem urgente
         time.sleep(2)
         stop_timer()
         st.rerun()
