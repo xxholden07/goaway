@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import time
 from datetime import datetime, timedelta
 import random
@@ -547,28 +548,55 @@ st.markdown("""
         🤖
     </div>
 </div>
+""", unsafe_allow_html=True)
 
+# JavaScript para o botão de chat (usando componente HTML)
+components.html("""
 <script>
     (function() {
-        const chatButton = document.getElementById('chatButton');
-        if (chatButton) {
-            chatButton.addEventListener('click', function() {
-                // Abrir em popup centralizado
-                const width = 500;
-                const height = 700;
-                const left = (screen.width - width) / 2;
-                const top = (screen.height - height) / 2;
+        // Aguardar o DOM carregar
+        window.addEventListener('load', function() {
+            // Tentar encontrar o botão no iframe parent
+            const checkButton = setInterval(function() {
+                const parentDoc = window.parent.document;
+                const chatButton = parentDoc.getElementById('chatButton');
                 
-                window.open(
-                    'https://chatgpt.com/g/g-69668205e3ac8191b3b04c831302c5d6-chego-tarde',
-                    'ChegaTarde',
-                    'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top + ',toolbar=no,menubar=no,scrollbars=yes,resizable=yes'
-                );
-            });
-        }
+                if (chatButton) {
+                    clearInterval(checkButton);
+                    
+                    // Remover listeners antigos se existirem
+                    const newButton = chatButton.cloneNode(true);
+                    chatButton.parentNode.replaceChild(newButton, chatButton);
+                    
+                    newButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        // Abrir em popup centralizado
+                        const width = 500;
+                        const height = 700;
+                        const left = (screen.width - width) / 2;
+                        const top = (screen.height - height) / 2;
+                        
+                        window.open(
+                            'https://chatgpt.com/g/g-69668205e3ac8191b3b04c831302c5d6-chego-tarde',
+                            'ChegaTarde',
+                            'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top + ',toolbar=no,menubar=no,scrollbars=yes,resizable=yes'
+                        );
+                    });
+                    
+                    console.log('Chat button configurado com sucesso!');
+                }
+            }, 100);
+            
+            // Parar de tentar após 5 segundos
+            setTimeout(function() {
+                clearInterval(checkButton);
+            }, 5000);
+        });
     })();
 </script>
-""", unsafe_allow_html=True)
+""", height=0)
 
 # Mensagens para lembretes
 REMINDER_MESSAGES = [
